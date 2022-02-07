@@ -22,17 +22,15 @@ jobs:
 
     # Service containers to run with `runner-job`
     services:
-      # Label used to access the service container
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0.21
         env:
-          MYSQL_DATABASE: sample
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: test
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
 
     steps:
       - uses: actions/checkout@v2
