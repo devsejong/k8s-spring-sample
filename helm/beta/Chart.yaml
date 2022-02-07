@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: 1.0.0-SNAPSHOT.431db05d
+description: A Springboot Helm chart for Kubernetes
+home: https://github.com/jhidalgo3/
+icon: https://jhidalgo3.github.io/helm-charts/logos/springboot-logo.png
+keywords:
+- springboot
+- kubernetes
+- deploy
+- keda
+- prometheus
+maintainers:
+- email: jhidalgo3@gmail.com
+  name: Jose Maria Hidalgo
+name: spring-boot-chart
+sources:
+- https://github.com/jhidalgo3/spring-boot-echo-service
+type: application
+version: 4.0.0

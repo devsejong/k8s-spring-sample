@@ -1,0 +1,24 @@
+{{- if .Values.prometheus.enabled }}
+{{- if .Values.keda.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "spring-boot-chart.fullname" . }}-scaledobject
+  labels:
+    {{- include "spring-boot-chart.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    name: {{ include "spring-boot-chart.fullname" . }}
+  minReplicaCount: {{ .Values.keda.minReplicaCount }}
+  maxReplicaCount: {{ .Values.keda.maxReplicaCount }}
+  pollingInterval: {{ .Values.keda.pollingInterval }}
+  cooldownPeriod: {{ .Values.keda.cooldownPeriod }}
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        metricName: requests_seconds
+        threshold: "{{ .Values.keda.threshold }}"
+        query: sum(rate(http_server_requests_seconds_count{job="{{ include "spring-boot-chart.fullname" . }}"}[1m]))
+{{- end }}
+{{- end }}

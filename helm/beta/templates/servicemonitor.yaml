@@ -1,0 +1,19 @@
+{{- if .Values.prometheus.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "spring-boot-chart.fullname" . }}
+  labels:
+    release: {{ .Values.prometheus.release }}
+    {{- include "spring-boot-chart.labels" . | nindent 4 }}
+     
+spec:
+  selector:
+    matchLabels:
+      {{- include "spring-boot-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http
+    path: '/actuator/prometheus'
+    interval: 10s
+    honorLabels: true
+{{- end }}
