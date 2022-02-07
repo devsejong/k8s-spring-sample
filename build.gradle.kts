@@ -3,8 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+
+    id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
+    id("org.jlleitschuh.gradle.ktlint-idea") version "10.1.0"
+
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
+
+    idea
 }
 
 group = "net.chandol"
@@ -56,4 +62,32 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+        runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+
+        resources.srcDir(file("src/integrationTest/resources"))
+    }
+}
+
+task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+
+    shouldRunAfter("test")
+}
+
+val integrationTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.implementation.get(), configurations.testImplementation.get())
+}
+
+idea.module {
+    testSourceDirs = testSourceDirs + project.sourceSets.getByName("integrationTest").allSource.srcDirs
+    testResourceDirs = testResourceDirs + project.sourceSets.getByName("integrationTest").resources.srcDirs
 }
