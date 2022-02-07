@@ -7,6 +7,8 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("org.jlleitschuh.gradle.ktlint-idea") version "10.1.0"
 
+    id("com.google.cloud.tools.jib") version "3.2.0"
+
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
 
@@ -90,4 +92,12 @@ val integrationTestImplementation: Configuration by configurations.getting {
 idea.module {
     testSourceDirs = testSourceDirs + project.sourceSets.getByName("integrationTest").allSource.srcDirs
     testResourceDirs = testResourceDirs + project.sourceSets.getByName("integrationTest").resources.srcDirs
+}
+
+jib.to {
+    image = "ghcr.io/devsejong/spring-with-k8s"
+    auth {
+        username = "devsejong"
+        password = "@@@"
+    }
 }
