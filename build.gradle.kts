@@ -93,8 +93,6 @@ task<Test>("integrationTest") {
     shouldRunAfter("test")
 }
 
-
-
 idea.module {
     testSourceDirs = testSourceDirs + project.sourceSets.getByName("integrationTest").allSource.srcDirs
     testResourceDirs = testResourceDirs + project.sourceSets.getByName("integrationTest").resources.srcDirs
