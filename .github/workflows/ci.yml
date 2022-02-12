@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew test
 
       - name: run integrationTest
-        run: ./gradlew integrationTest
+        run: ./gradlew integrationTest --no-parallel
 
       - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.

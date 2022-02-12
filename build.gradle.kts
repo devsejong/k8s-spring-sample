@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch.password
+import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToElasticSearch.url
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -96,4 +98,20 @@ task<Test>("integrationTest") {
 idea.module {
     testSourceDirs = testSourceDirs + project.sourceSets.getByName("integrationTest").allSource.srcDirs
     testResourceDirs = testResourceDirs + project.sourceSets.getByName("integrationTest").resources.srcDirs
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+    val containerRegistry = System.getenv("CONTAINER_REGISTRY") ?: "ghcr.io"
+    val containerImageName = System.getenv("CONTAINER_IMAGE_NAME") ?: "digitalservice4germany/${rootProject.name}"
+    val containerImageVersion = System.getenv("CONTAINER_IMAGE_VERSION") ?: "latest"
+
+    imageName = "$containerRegistry/$containerImageName:$containerImageVersion"
+    isPublish = false
+    docker {
+        publishRegistry {
+            username = System.getenv("CONTAINER_REGISTRY_USER") ?: ""
+            password = System.getenv("CONTAINER_REGISTRY_PASSWORD") ?: ""
+            url = "https://$containerRegistry"
+        }
+    }
 }
