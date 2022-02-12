@@ -1,0 +1,13 @@
+---
+spring:
+  config:
+    activate.on-profile: local
+
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb?options=DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=true
+    username: sa
+    password:
+  data:
+    jdbc:
+      repositories:
+        enabled: true

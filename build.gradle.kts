@@ -23,6 +23,19 @@ configurations {
     }
 }
 
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+        runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
+
+        resources.srcDir(file("src/integrationTest/resources"))
+    }
+}
+
+val integrationTestImplementation: Configuration by configurations.getting {
+    extendsFrom(configurations.implementation.get(), configurations.testImplementation.get())
+}
+
 repositories {
     mavenCentral()
 }
@@ -51,6 +64,8 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.1.0")
     testImplementation("io.kotest:kotest-assertions-core:5.1.0")
     testImplementation("io.kotest:kotest-assertions-json:5.1.0")
+
+    integrationTestImplementation("io.r2dbc:r2dbc-h2")
 }
 
 tasks.withType<KotlinCompile> {
@@ -64,13 +79,8 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-sourceSets {
-    create("integrationTest") {
-        compileClasspath += sourceSets.main.get().output + sourceSets.test.get().output
-        runtimeClasspath += sourceSets.main.get().output + sourceSets.test.get().output
-
-        resources.srcDir(file("src/integrationTest/resources"))
-    }
+project.tasks.named("processIntegrationTestResources", Copy::class.java) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 task<Test>("integrationTest") {
@@ -83,9 +93,7 @@ task<Test>("integrationTest") {
     shouldRunAfter("test")
 }
 
-val integrationTestImplementation: Configuration by configurations.getting {
-    extendsFrom(configurations.implementation.get(), configurations.testImplementation.get())
-}
+
 
 idea.module {
     testSourceDirs = testSourceDirs + project.sourceSets.getByName("integrationTest").allSource.srcDirs

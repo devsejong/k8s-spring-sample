@@ -7,13 +7,6 @@ on:
       - develop
       - master
       - ci
-  pull_request:
-    types:
-      - synchronize
-      - opened
-    branches:
-      - develop
-      - master
 
 jobs:
   run-ci:
@@ -55,9 +48,6 @@ jobs:
         run: ./gradlew test
 
       - name: run integrationTest
-#        env:
-#          ELASTICSEARCH_TEST_HOSTNAME: localhost
-#          ELASTICSEARCH_TEST_PORT: ${{job.services.elasticsearch.ports[9200]}}
         run: ./gradlew integrationTest
 
       - name: Cleanup Gradle Cache

@@ -2,3 +2,5 @@ spring:
   config:
     import:
       - classpath:/application-base.yml
+  profiles:
+    default: local
