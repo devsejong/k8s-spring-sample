@@ -16,6 +16,9 @@ jobs:
       CONTAINER_REGISTRY: ghcr.io
       CONTAINER_IMAGE_NAME: ${{ github.repository }}
       CONTAINER_IMAGE_VERSION: ${{ github.sha }}
+    permissions:
+      packages: write
+      contents: read
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
