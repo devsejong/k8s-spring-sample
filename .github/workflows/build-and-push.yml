@@ -1,4 +1,4 @@
-name: build image and upload
+name: build image and push
 
 on:
   workflow_run:
@@ -9,9 +9,13 @@ on:
       tags: *
 
 jobs:
-  build-image-and-upload:
+  build-image-and-push:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      CONTAINER_REGISTRY: ghcr.io
+      CONTAINER_IMAGE_NAME: ${{ github.repository }}
+      CONTAINER_IMAGE_VERSION: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -19,7 +23,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -29,8 +32,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: build image
-        run: ./gradlew package
-
-
+      - name: Build and publish container image
+        run: CONTAINER_REGISTRY_USER=${{ github.actor }} CONTAINER_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }} ./gradlew bootBuildImage --publishImage
 
